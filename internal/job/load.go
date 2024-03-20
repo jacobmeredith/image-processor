@@ -45,9 +45,7 @@ func Load(directory, output string, verbose bool) (<-chan Job, error) {
 			fileDirectoryPath := filepath.Join(directoryPath, file.Name())
 			fileOutputPath := filepath.Join(outputPath, file.Name())
 
-			if verbose {
-				log.Printf("Reading: %s\n", fileDirectoryPath)
-			}
+			log.Printf("Loading: %s\n", fileDirectoryPath)
 
 			if file.IsDir() {
 				continue

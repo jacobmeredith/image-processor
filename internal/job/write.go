@@ -3,6 +3,7 @@ package job
 import (
 	"image"
 	"image/jpeg"
+	"log"
 	"os"
 )
 
@@ -26,6 +27,7 @@ func Write(jobs <-chan Job) <-chan bool {
 
 	go func() {
 		for job := range jobs {
+			log.Printf("Writing: %s\n", job.Input)
 			err := writeImage(job.Output, job.File)
 			if err != nil {
 				status <- false
