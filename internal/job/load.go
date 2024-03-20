@@ -45,24 +45,26 @@ func Load(options Options) (<-chan Job, error) {
 			fileDirectoryPath := filepath.Join(directoryPath, file.Name())
 			fileOutputPath := filepath.Join(outputPath, file.Name())
 
-			if options.Verbose {
-				log.Printf("[Load]: %s\n", fileDirectoryPath)
-			}
-
 			if file.IsDir() {
 				continue
 			}
 
-			image, err := read(fileDirectoryPath)
-			if err != nil {
-				continue
+			if options.Verbose {
+				log.Printf("[Load]: %s\n", fileDirectoryPath)
 			}
 
 			job := Job{
 				Input:  fileDirectoryPath,
-				File:   image,
 				Output: fileOutputPath,
 				Errors: []Error{},
+			}
+
+			image, err := read(fileDirectoryPath)
+			if err != nil {
+				job.Errors = append(job.Errors, Error{"Load", err.Error()})
+				job.Cancel = true
+			} else {
+				job.File = image
 			}
 
 			jobs <- job

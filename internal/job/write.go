@@ -27,6 +27,10 @@ func Write(jobs <-chan Job, options Options) <-chan Job {
 
 	go func() {
 		for job := range jobs {
+			if job.Cancel {
+				continue
+			}
+
 			if options.Verbose {
 				log.Printf("[Write]: %s\n", job.Input)
 			}

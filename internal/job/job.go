@@ -20,5 +20,6 @@ type Job struct {
 	Input  string
 	File   image.Image
 	Output string
+	Cancel bool
 	Errors []Error
 }
