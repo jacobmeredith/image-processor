@@ -3,7 +3,10 @@ package job
 import "image"
 
 type Options struct {
-	Scale float64
+	InputDirectory  string
+	OutputDirectory string
+	Verbose         bool
+	Scale           float64
 }
 
 type Job struct {

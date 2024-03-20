@@ -2,13 +2,24 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 
 	"github.com/jacobmeredith/image-processor/internal/job"
 )
 
 func main() {
+	options := getFlags()
+
+	jobs, err := job.Load(options.InputDirectory, options.OutputDirectory, options.Verbose)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	scaled := job.Scale(jobs, *options)
+	job.Write(scaled)
+}
+
+func getFlags() *job.Options {
 	directory := flag.String("directory", "", "the directory to read images from")
 	output := flag.String("output", "", "the directory to output the images")
 	verbose := flag.Bool("verbose", false, "verbose logging")
@@ -16,25 +27,10 @@ func main() {
 
 	flag.Parse()
 
-	options := job.Options{
-		Scale: *scale,
-	}
-
-	fmt.Printf("%v", options)
-
-	jobs, err := job.Load(*directory, *output, *verbose)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	scaled := job.Scale(jobs, options)
-	writes := job.Write(scaled)
-
-	for success := range writes {
-		if success {
-			fmt.Println("Success")
-		} else {
-			fmt.Println("Failed")
-		}
+	return &job.Options{
+		InputDirectory:  *directory,
+		OutputDirectory: *output,
+		Verbose:         *verbose,
+		Scale:           *scale,
 	}
 }
