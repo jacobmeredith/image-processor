@@ -16,7 +16,9 @@ func Scale(jobs <-chan Job, options Options) <-chan Job {
 
 	go func() {
 		for job := range jobs {
-			log.Printf("Resizing job: %s\n", job.Input)
+			if options.Verbose {
+				log.Printf("[Scale]: %s\n", job.Input)
+			}
 
 			new_image := image.NewRGBA(image.Rect(0, 0, int(float64(job.File.Bounds().Max.X)*options.Scale), int(float64(job.File.Bounds().Max.Y)*options.Scale)))
 			draw.NearestNeighbor.Scale(new_image, new_image.Rect, job.File, job.File.Bounds(), draw.Over, nil)

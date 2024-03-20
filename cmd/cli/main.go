@@ -8,18 +8,24 @@ import (
 )
 
 func main() {
-	options := getFlags()
+	options := getOptions()
 
-	jobs, err := job.Load(options.InputDirectory, options.OutputDirectory, options.Verbose)
+	jobs, err := job.Load(*options)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	scaled := job.Scale(jobs, *options)
-	job.Write(scaled)
+	completed := job.Write(scaled, *options)
+
+	for job := range completed {
+		for _, error := range job.Errors {
+			log.Printf("[%s]: %s\n", error.Step, error.Message)
+		}
+	}
 }
 
-func getFlags() *job.Options {
+func getOptions() *job.Options {
 	directory := flag.String("directory", "", "the directory to read images from")
 	output := flag.String("output", "", "the directory to output the images")
 	verbose := flag.Bool("verbose", false, "verbose logging")

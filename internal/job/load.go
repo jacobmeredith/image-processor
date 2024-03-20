@@ -22,18 +22,18 @@ func read(path string) (image.Image, error) {
 	return img, nil
 }
 
-func Load(directory, output string, verbose bool) (<-chan Job, error) {
-	files, err := os.ReadDir(directory)
+func Load(options Options) (<-chan Job, error) {
+	files, err := os.ReadDir(options.InputDirectory)
 	if err != nil {
 		return nil, err
 	}
 
-	directoryPath, err := filepath.Abs(directory)
+	directoryPath, err := filepath.Abs(options.InputDirectory)
 	if err != nil {
 		return nil, err
 	}
 
-	outputPath, err := filepath.Abs(output)
+	outputPath, err := filepath.Abs(options.OutputDirectory)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,9 @@ func Load(directory, output string, verbose bool) (<-chan Job, error) {
 			fileDirectoryPath := filepath.Join(directoryPath, file.Name())
 			fileOutputPath := filepath.Join(outputPath, file.Name())
 
-			log.Printf("Loading: %s\n", fileDirectoryPath)
+			if options.Verbose {
+				log.Printf("[Load]: %s\n", fileDirectoryPath)
+			}
 
 			if file.IsDir() {
 				continue
@@ -60,6 +62,7 @@ func Load(directory, output string, verbose bool) (<-chan Job, error) {
 				Input:  fileDirectoryPath,
 				File:   image,
 				Output: fileOutputPath,
+				Errors: []Error{},
 			}
 
 			jobs <- job

@@ -1,6 +1,8 @@
 package job
 
-import "image"
+import (
+	"image"
+)
 
 type Options struct {
 	InputDirectory  string
@@ -9,8 +11,14 @@ type Options struct {
 	Scale           float64
 }
 
+type Error struct {
+	Step    string
+	Message string
+}
+
 type Job struct {
 	Input  string
 	File   image.Image
 	Output string
+	Errors []Error
 }

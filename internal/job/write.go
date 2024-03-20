@@ -22,23 +22,25 @@ func writeImage(path string, image image.Image) error {
 	return nil
 }
 
-func Write(jobs <-chan Job) <-chan bool {
-	status := make(chan bool)
+func Write(jobs <-chan Job, options Options) <-chan Job {
+	new_jobs := make(chan Job)
 
 	go func() {
 		for job := range jobs {
-			log.Printf("Writing: %s\n", job.Input)
-			err := writeImage(job.Output, job.File)
-			if err != nil {
-				status <- false
-				continue
+			if options.Verbose {
+				log.Printf("[Write]: %s\n", job.Input)
 			}
 
-			status <- true
+			err := writeImage(job.Output, job.File)
+			if err != nil {
+				job.Errors = append(job.Errors, Error{"Write", err.Error()})
+			}
+
+			new_jobs <- job
 		}
 
-		close(status)
+		close(new_jobs)
 	}()
 
-	return status
+	return new_jobs
 }
