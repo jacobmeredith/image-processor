@@ -14,8 +14,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	scaled := job.Scale(jobs, *options)
+	cropped := job.Crop(jobs, *options)
+	scaled := job.Scale(cropped, *options)
 	completed := job.Write(scaled, *options)
 
 	for job := range completed {
@@ -30,6 +30,10 @@ func getOptions() *job.Options {
 	output := flag.String("output", "", "the directory to output the images")
 	verbose := flag.Bool("verbose", false, "verbose logging")
 	scale := flag.Float64("scale", 0.0, "how much you want to scale the image by as a decimal e.g 0.5")
+	cropX := flag.Int("crop-x", 0, "")
+	cropY := flag.Int("crop-y", 0, "")
+	cropWidth := flag.Int("crop-width", 0, "")
+	cropHeight := flag.Int("crop-height", 0, "")
 
 	flag.Parse()
 
@@ -38,5 +42,11 @@ func getOptions() *job.Options {
 		OutputDirectory: *output,
 		Verbose:         *verbose,
 		Scale:           *scale,
+		Crop: job.CropOptions{
+			X:      *cropX,
+			Y:      *cropY,
+			Width:  *cropWidth,
+			Height: *cropHeight,
+		},
 	}
 }

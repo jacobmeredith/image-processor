@@ -9,6 +9,14 @@ type Options struct {
 	OutputDirectory string
 	Verbose         bool
 	Scale           float64
+	Crop            CropOptions
+}
+
+type CropOptions struct {
+	X      int
+	Y      int
+	Width  int
+	Height int
 }
 
 type Error struct {
