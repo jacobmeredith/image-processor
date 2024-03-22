@@ -34,6 +34,7 @@ func getOptions() *job.Options {
 	cropY := flag.Int("crop-y", 0, "")
 	cropWidth := flag.Int("crop-width", 0, "")
 	cropHeight := flag.Int("crop-height", 0, "")
+	quality := flag.Int("quality", 100, "")
 
 	flag.Parse()
 
@@ -42,6 +43,7 @@ func getOptions() *job.Options {
 		OutputDirectory: *output,
 		Verbose:         *verbose,
 		Scale:           *scale,
+		Quality:         *quality,
 		Crop: job.CropOptions{
 			X:      *cropX,
 			Y:      *cropY,

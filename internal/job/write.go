@@ -7,14 +7,14 @@ import (
 	"os"
 )
 
-func writeImage(path string, image image.Image) error {
+func writeImage(path string, image image.Image, quality int) error {
 	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	err = jpeg.Encode(file, image, nil)
+	err = jpeg.Encode(file, image, &jpeg.Options{Quality: quality})
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func Write(jobs <-chan Job, options Options) <-chan Job {
 				log.Printf("[Write]: %s\n", job.Input)
 			}
 
-			err := writeImage(job.Output, job.File)
+			err := writeImage(job.Output, job.File, options.Quality)
 			if err != nil {
 				job.Errors = append(job.Errors, Error{"Write", err.Error()})
 			}

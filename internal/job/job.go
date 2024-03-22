@@ -9,6 +9,7 @@ type Options struct {
 	OutputDirectory string
 	Verbose         bool
 	Scale           float64
+	Quality         int
 	Crop            CropOptions
 }
 
